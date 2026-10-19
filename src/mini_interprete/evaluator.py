@@ -4,8 +4,24 @@ Recorre el arbol de abajo hacia arriba: para evaluar una operacion hay que
 evaluar primero sus dos lados.
 """
 
+import operator
+
 from .ast import Numero, OperacionBinaria
 from .errores import ErrorDeEvaluacion
+
+
+def _dividir(izquierda, derecha):
+    if derecha == 0:
+        raise ErrorDeEvaluacion("division entre cero")
+    return izquierda / derecha
+
+
+OPERACIONES = {
+    "+": operator.add,
+    "-": operator.sub,
+    "*": operator.mul,
+    "/": _dividir,
+}
 
 
 def evaluar(nodo):
@@ -17,17 +33,9 @@ def evaluar(nodo):
         izquierda = evaluar(nodo.izquierda)
         derecha = evaluar(nodo.derecha)
 
-        if nodo.operador == "+":
-            return izquierda + derecha
-        if nodo.operador == "-":
-            return izquierda - derecha
-        if nodo.operador == "*":
-            return izquierda * derecha
-        if nodo.operador == "/":
-            if derecha == 0:
-                raise ErrorDeEvaluacion("division entre cero")
-            return izquierda / derecha
-
-        raise ErrorDeEvaluacion(f"operador desconocido: {nodo.operador!r}")
+        operacion = OPERACIONES.get(nodo.operador)
+        if operacion is None:
+            raise ErrorDeEvaluacion(f"operador desconocido: {nodo.operador!r}")
+        return operacion(izquierda, derecha)
 
     raise ErrorDeEvaluacion(f"nodo desconocido: {nodo!r}")
