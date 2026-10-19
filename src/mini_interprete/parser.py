@@ -53,23 +53,22 @@ class Parser:
         """Posicion justo despues del ultimo token (0 si no hay tokens)."""
         if not self.tokens:
             return 0
-        return self.tokens[-1].posicion + 1 
+        return self.tokens[-1].posicion + 1
+
+    def _binaria(self, operadores, siguiente_nivel):
+        """Un nivel de la gramatica: siguiente (op siguiente)*, asociando a la izquierda."""
+        izquierda = siguiente_nivel()
+        while self._actual() is not None and self._actual().tipo in operadores:
+            operador = self._avanzar()
+            derecha = siguiente_nivel()
+            izquierda = OperacionBinaria(operador.valor, izquierda, derecha)
+        return izquierda
 
     def _expresion(self):
-        izquierda = self._termino()
-        while self._actual() is not None and self._actual().tipo in OPERADORES_SUMA:
-            operador = self._avanzar()
-            derecha = self._termino()
-            izquierda = OperacionBinaria(operador.valor, izquierda, derecha)
-        return izquierda
+        return self._binaria(OPERADORES_SUMA, self._termino)
 
     def _termino(self):
-        izquierda = self._factor()
-        while self._actual() is not None and self._actual().tipo in OPERADORES_PRODUCTO:
-            operador = self._avanzar()
-            derecha = self._factor()
-            izquierda = OperacionBinaria(operador.valor, izquierda, derecha)
-        return izquierda
+        return self._binaria(OPERADORES_PRODUCTO, self._factor)
 
     def _factor(self):
         token = self._avanzar()
