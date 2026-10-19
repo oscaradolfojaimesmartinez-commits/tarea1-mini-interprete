@@ -27,7 +27,12 @@ class Parser:
 
     def parsear(self):
         """Construye el AST de la lista de tokens."""
-        return self._expresion()
+        nodo = self._expresion()
+        sobrante = self._actual()
+        if sobrante is not None:
+            raise ErrorDeSintaxis(
+                f"token inesperado {sobrante.valor!r}", sobrante.posicion)
+        return nodo
 
     def _actual(self):
         """El token en la posicion actual, o None si ya no quedan."""
@@ -37,26 +42,33 @@ class Parser:
 
     def _avanzar(self):
         """Consume el token actual y lo regresa."""
+        if self.pos >= len(self.tokens):
+            raise ErrorDeSintaxis("la expresion esta incompleta",
+                                  self._posicion_del_final())
         token = self.tokens[self.pos]
         self.pos += 1
         return token
 
+    def _posicion_del_final(self) -> int:
+        """Posicion justo despues del ultimo token (0 si no hay tokens)."""
+        if not self.tokens:
+            return 0
+        return self.tokens[-1].posicion + 1 
+
     def _expresion(self):
         izquierda = self._termino()
-        actual = self._actual()
-        if actual is not None and actual.tipo in OPERADORES_SUMA:
+        while self._actual() is not None and self._actual().tipo in OPERADORES_SUMA:
             operador = self._avanzar()
-            derecha = self._expresion()
-            return OperacionBinaria(operador.valor, izquierda, derecha)
+            derecha = self._termino()
+            izquierda = OperacionBinaria(operador.valor, izquierda, derecha)
         return izquierda
 
     def _termino(self):
         izquierda = self._factor()
-        actual = self._actual()
-        if actual is not None and actual.tipo in OPERADORES_PRODUCTO:
+        while self._actual() is not None and self._actual().tipo in OPERADORES_PRODUCTO:
             operador = self._avanzar()
-            derecha = self._termino()
-            return OperacionBinaria(operador.valor, izquierda, derecha)
+            derecha = self._factor()
+            izquierda = OperacionBinaria(operador.valor, izquierda, derecha)
         return izquierda
 
     def _factor(self):
