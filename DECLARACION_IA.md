@@ -125,9 +125,7 @@ Se les pidió intentarlo primero por su cuenta. Si lo hicieron así:
 - Leí el `git diff` de cada archivo antes de hacer commit, para confirmar que
   el cambio era el esperado y no tocaba otras cosas.
 - No modifiqué ni borré ninguna de las 13 pruebas originales; siguen pasando.
-- Probé a mano entradas como `10 - 3 - 2` con `python3 interprete.py` y
-  vi que daba `5`. [COMPLETAR: también comprobé el AST de `(3 + 4) * 2` con
-  `--arbol` y comparé con mi dibujo, si lo hiciste]
+- Probé a mano entradas como `10 - 3 - 2` con `python3 interprete.py` y vi que daba `5`. [También comprobé el AST de `(3 + 4) * 2` con `--arbol` y comparé con mi dibujo, si lo hiciste]
 
 ---
 
