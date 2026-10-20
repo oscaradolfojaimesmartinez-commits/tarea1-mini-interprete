@@ -5,7 +5,7 @@
 2.
 3.
 
-**Fork:** https://github.com/oscaradolfojaimesmartinez-commits/tarea1-mini-interprete/pull/1 
+**Fork:** https://github.com/oscaradolfojaimesmartinez-commits/tarea1-mini-interprete/tree/tarea1-pruebas-refactorizacion 
 
 **Rama:** tarea1-pruebas-refactorizacion
 
